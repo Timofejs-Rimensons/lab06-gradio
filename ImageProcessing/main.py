@@ -3,8 +3,9 @@ from Services.ImageProcessingService import ImageProcessingService
 
 PROCESSING_METHODS = {
     "To Grayscale": ImageProcessingService.to_grayscale,
-    "Extract Details": None,
-    "Detect Objects": None
+    "Extract Details": ImageProcessingService.extract_details,
+    "Label Object": ImageProcessingService.label_object,
+    "To Black & White": ImageProcessingService.to_black_and_white
 }
 
 def process_image(image_input, processing_type):
@@ -18,12 +19,11 @@ def process_image(image_input, processing_type):
         return None, confirmation_text
     
     try:
-        image_output = processing_method(image_input)
-    except:
+        image_output, confirmation_text = processing_method(image_input)
+    except Exception as e:
         confirmation_text = f"Error: Method '{processing_type}' is not working..."
         return None, confirmation_text
     
-    confirmation_text = f"Success: Processing '{processing_type}' is completed!"
     return image_output, confirmation_text
     
 
@@ -34,7 +34,7 @@ with gr.Blocks(title="Birds Viewer") as demo:
         with gr.Column():
             
             radio_processing_type = gr.Radio(
-                choices=["To Grayscale", "Extract details"],
+                choices=["To Grayscale", "Extract Details", "Label Object", "To Black & White"],
                 label="Processing Type",
                 value="To Grayscale"
             )
